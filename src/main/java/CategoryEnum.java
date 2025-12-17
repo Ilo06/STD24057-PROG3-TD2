@@ -1,3 +1,4 @@
 public enum CategoryEnum {
-    START, MAIN, DESSERT
+    VEGETABLE, ANIMAL, MARINE, DAIRY, OTHER
+
 }

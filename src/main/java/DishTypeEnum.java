@@ -1,3 +1,3 @@
 public enum DishTypeEnum {
-    VEGETABLE, ANIMAL, MARINE, DAIRY, OTHER
+    START, MAIN, DESSERT
 }

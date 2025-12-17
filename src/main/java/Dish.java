@@ -50,4 +50,14 @@ public class Dish {
     public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
+
+    @Override
+    public String toString() {
+        return "Dish{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", dishType=" + dishType +
+                ", ingredients=" + ingredients +
+                '}';
+    }
 }

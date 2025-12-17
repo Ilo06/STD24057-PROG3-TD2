@@ -1,8 +1,9 @@
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-        DBConnection dbConnection = new DBConnection();
+import java.sql.SQLException;
 
-        dbConnection.getDBConnection();
+public class Main {
+    public static void main(String[] args) throws SQLException {
+        DataRetriever dataRetriever = new DataRetriever();
+
+        System.out.println(dataRetriever.findDishById(1));
     }
 }

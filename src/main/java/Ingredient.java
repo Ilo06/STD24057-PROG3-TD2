@@ -57,4 +57,14 @@ public class Ingredient {
     public String getDishName() {
         return dish.getName();
     }
+
+    @Override
+    public String toString() {
+        return "Ingredient{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", category=" + category +
+                '}';
+    }
 }
