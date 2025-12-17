@@ -2,6 +2,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DataRetriever {
     public Dish findDishById(int id) throws SQLException {
@@ -41,5 +42,23 @@ public class DataRetriever {
         }
 
         return dish;
+    }
+
+    public List<Ingredient> findIngredients(int page, int size) throws SQLException {
+        DBConnection connection = new DBConnection();
+
+        String query = "SELECT i.id AS ingredient_id, i.name AS ingredient_name, i.price AS ingredient_price, i.category AS ingredient_category, "
+                +"FROM ingredient i " +
+                "LIMIT ? OFFSET ?";
+        PreparedStatement statement = connection.getDBConnection().prepareStatement(query);
+        statement.setInt(1, size);
+        statement.setInt(2, page * size);
+        ResultSet resultSet = statement.executeQuery();
+        List<Ingredient> ingredients = new ArrayList<>();
+        while (resultSet.next()){
+            Ingredient ingredient = new Ingredient(resultSet.getInt("ingredient_id"), resultSet.getString("ingredient_name"), resultSet.getDouble("ingredient_price"), CategoryEnum.valueOf(resultSet.getString("ingredient_category")), null);
+            ingredients.add(ingredient);
+        }
+        return ingredients;
     }
 }
