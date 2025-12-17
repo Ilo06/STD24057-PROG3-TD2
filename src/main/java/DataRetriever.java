@@ -47,9 +47,9 @@ public class DataRetriever {
     public List<Ingredient> findIngredients(int page, int size) throws SQLException {
         DBConnection connection = new DBConnection();
 
-        String query = "SELECT i.id AS ingredient_id, i.name AS ingredient_name, i.price AS ingredient_price, i.category AS ingredient_category, "
-                +"FROM ingredient i " +
-                "LIMIT ? OFFSET ?";
+        String query = "SELECT i.id AS ingredient_id, i.name AS ingredient_name, i.price AS ingredient_price, i.category AS ingredient_category"
+                +" FROM ingredient i " +
+                " LIMIT ? OFFSET ?";
         PreparedStatement statement = connection.getDBConnection().prepareStatement(query);
         statement.setInt(1, size);
         statement.setInt(2, page * size);

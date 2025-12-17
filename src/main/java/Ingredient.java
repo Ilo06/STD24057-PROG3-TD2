@@ -55,7 +55,7 @@ public class Ingredient {
     }
 
     public String getDishName() {
-        return dish.getName();
+        return dish == null ? null : dish.getName();
     }
 
     @Override
@@ -65,6 +65,7 @@ public class Ingredient {
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", category=" + category +
+                ", dish=" + getDishName() +
                 '}';
     }
 }
