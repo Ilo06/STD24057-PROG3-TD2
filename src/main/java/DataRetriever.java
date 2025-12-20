@@ -1,6 +1,4 @@
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,5 +58,30 @@ public class DataRetriever {
             ingredients.add(ingredient);
         }
         return ingredients;
+    }
+
+    public List<Ingredient> createIngredients(List<Ingredient> newIngredient) throws SQLException {
+        DBConnection connection = new DBConnection();
+
+        String query = "INSERT INTO INGREDIENT (name, price, category) VALUES (?, ?, ?);";
+
+        Connection activeConnection = connection.getDBConnection();
+
+        activeConnection.setAutoCommit(false);
+        try(PreparedStatement statement = activeConnection.prepareStatement(query)){
+            for (Ingredient ingredient : newIngredient) {
+                statement.setString(1, ingredient.getName());
+                statement.setDouble(2, ingredient.getPrice());
+                statement.setObject(3, ingredient.getCategory(), Types.OTHER);
+                statement.addBatch();
+            }
+            statement.executeBatch();
+            activeConnection.commit();
+        } catch (SQLException e) {
+            activeConnection.rollback();
+            throw new RuntimeException(e);
+        }
+
+        return newIngredient;
     }
 }

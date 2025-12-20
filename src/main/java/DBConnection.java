@@ -17,6 +17,5 @@ public class DBConnection {
             throw new RuntimeException(e);
         }
     }
-    //JDBC_URL=jdbc:postgresql://localhost:5432/mini_dish_db; USERNAME=mini_dish_db_manager; PASSWORD='123456'
 }
 
