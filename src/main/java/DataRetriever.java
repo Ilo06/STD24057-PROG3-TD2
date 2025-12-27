@@ -84,4 +84,32 @@ public class DataRetriever {
 
         return newIngredient;
     }
+    
+    public Dish saveDish(Dish dishToSave) throws SQLException {
+        DBConnection connection = new DBConnection();
+        Connection activeConnection = connection.getDBConnection();
+
+        String query = "INSERT INTO Dish VALUES (?, ?, ?);";
+
+        try (PreparedStatement statement = activeConnection.prepareStatement(query)) {
+            statement.setInt(1, dishToSave.getId());
+            statement.setString(2, dishToSave.getName());
+            statement.setObject(3, dishToSave.getDishType(), Types.OTHER);
+
+            statement.executeUpdate(query);
+        } catch (SQLException e){
+            String updtateQuery = "UPDATE Dish SET name = ?, price = ? WHERE id = ?;";
+            try (PreparedStatement statement = activeConnection.prepareStatement(updtateQuery)) {
+                statement.setString(1, dishToSave.getName());
+                statement.setDouble(2, dishToSave.getDishPrice());
+                statement.setInt(3, dishToSave.getId());
+
+                statement.executeUpdate(updtateQuery);
+            }catch (SQLException sqlException){
+                throw new RuntimeException(sqlException);
+            }
+        }
+
+        return dishToSave;
+    }
 }

@@ -18,3 +18,4 @@ CREATE TABLE Ingredient (
 );
 
 ALTER TABLE Ingredient ADD CONSTRAINT  name UNIQUE (name);
+ALTER TABLE Dish ADD CONSTRAINT  name UNIQUE (name);
