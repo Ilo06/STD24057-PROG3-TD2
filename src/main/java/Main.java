@@ -9,12 +9,17 @@ public class Main {
 //        System.out.println(dataRetriever.findDishById(1));
 //        System.out.println("------------------------------");
 
-        List<Ingredient> myIngredients = new ArrayList<>();
+//        List<Ingredient> myIngredients = new ArrayList<>();
+//
+//        myIngredients.add(new Ingredient( "Pepper",300.0d, CategoryEnum.VEGETABLE));
+//        myIngredients.add(new Ingredient( "Carrot",200.0d, CategoryEnum.VEGETABLE));
+//
+//        System.out.println(dataRetriever.createIngredients(myIngredients));
+//        System.out.println(dataRetriever.findIngredients(0, 10));
 
-        myIngredients.add(new Ingredient( "Pepper",300.0d, CategoryEnum.VEGETABLE));
-        myIngredients.add(new Ingredient( "Carrot",200.0d, CategoryEnum.VEGETABLE));
 
-        System.out.println(dataRetriever.createIngredients(myIngredients));
-        System.out.println(dataRetriever.findIngredients(0, 10));
+//        System.out.println(dataRetriever.findDishByIngredientName("beurre"));
+
+        System.out.println(dataRetriever.findIngredientsByCriteria("a", CategoryEnum.VEGETABLE, "a", 0, 6));
     }
 }
