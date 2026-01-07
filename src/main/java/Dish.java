@@ -5,12 +5,37 @@ public class Dish {
     private String name;
     private DishTypeEnum dishType;
     private List<Ingredient> ingredients;
+    private Double unitPrice;
 
     public Dish(int id, String name, DishTypeEnum dishType, List<Ingredient> ingredients) {
         this.id = id;
         this.name = name;
         this.dishType = dishType;
         this.ingredients = ingredients;
+    }
+
+    public Dish(int id, String name, DishTypeEnum dishType, Double unitPrice, List<Ingredient> ingredients) {
+        this.id = id;
+        this.name = name;
+        this.dishType = dishType;
+        this.unitPrice = unitPrice;
+        this.ingredients = ingredients;
+    }
+
+    public Double getGrossMargin() {
+        if (this.unitPrice == null) {
+            throw new RuntimeException("Le prix de vente n'ayant pas encore de valeur, il est impossible de calculer la marge.");
+        }
+        // Marge brute = Prix de vente - Coût des ingrédients
+        return this.unitPrice - this.getDishCost();
+    }
+
+    public Double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 
     public int getId() {
@@ -41,7 +66,7 @@ public class Dish {
         return ingredients;
     }
 
-    public Double getDishPrice() {
+    public Double getDishCost() {
         return ingredients.stream()
                 .mapToDouble(Ingredient::getPrice)
                 .sum();
@@ -57,6 +82,7 @@ public class Dish {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", dishType=" + dishType +
+                ", unitPrice=" + unitPrice +
                 ", ingredients=" + ingredients +
                 '}';
     }
