@@ -1,25 +1,39 @@
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws SQLException {
-        DataRetriever dataRetriever = new DataRetriever();
+    public static void main(String[] args) throws Exception {
+        DataRetriever dr = new DataRetriever();
 
-//        System.out.println(dataRetriever.findDishById(1));
-//        System.out.println("------------------------------");
+        // a)
+        System.out.println(dr.findDishById(1));
 
-//        List<Ingredient> myIngredients = new ArrayList<>();
-//
-//        myIngredients.add(new Ingredient( "Pepper",300.0d, CategoryEnum.VEGETABLE));
-//        myIngredients.add(new Ingredient( "Carrot",200.0d, CategoryEnum.VEGETABLE));
-//
-//        System.out.println(dataRetriever.createIngredients(myIngredients));
-//        System.out.println(dataRetriever.findIngredients(0, 10));
+        // b)
+        try {
+            dr.findDishById(999);
+        } catch (RuntimeException e) {
+            System.out.println("Dish not found OK");
+        }
 
+        // c)
+        System.out.println(dr.findIngredients(2, 2));
 
-//        System.out.println(dataRetriever.findDishByIngredientName("beurre"));
+        // d)
+        System.out.println(dr.findIngredients(3, 5));
 
-        System.out.println(dataRetriever.findIngredientsByCriteria("a", CategoryEnum.VEGETABLE, "a", 0, 6));
+        // e)
+        System.out.println(dr.findDishByIngredientName("oeur"));
+
+        // i)
+        List<Ingredient> list = List.of(
+                new Ingredient("Fromage", 1200.0d, CategoryEnum.DAIRY),
+                new Ingredient("Oignon", 500.0d, CategoryEnum.VEGETABLE)
+        );
+        dr.createIngredients(list);
+
+        // k)
+//        Dish soup = new Dish(10, "Soupe de légumes", DishTypeEnum.START, List.of(
+//                new Ingredient(2)
+//        ));
+//        dr.saveDish(soup);
     }
 }
