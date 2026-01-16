@@ -26,7 +26,6 @@ public class Dish {
         if (this.unitPrice == null) {
             throw new RuntimeException("Le prix de vente n'ayant pas encore de valeur, il est impossible de calculer la marge.");
         }
-        // Marge brute = Prix de vente - Coût des ingrédients
         return this.unitPrice - this.getDishCost();
     }
 

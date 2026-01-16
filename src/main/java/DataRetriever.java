@@ -33,6 +33,7 @@ public class DataRetriever {
                     );
                 }
 
+
                 Ingredient ingredient = new Ingredient(
                         resultSet.getInt("ingredient_id"),
                         resultSet.getString("ingredient_name"),
