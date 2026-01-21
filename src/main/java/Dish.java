@@ -22,6 +22,10 @@ public class Dish {
         this.ingredients = ingredients;
     }
 
+    public Dish() {
+
+    }
+
     public Double getGrossMargin() {
         if (this.unitPrice == null) {
             throw new RuntimeException("Le prix de vente n'ayant pas encore de valeur, il est impossible de calculer la marge.");
