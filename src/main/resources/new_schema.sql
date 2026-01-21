@@ -3,6 +3,8 @@ CREATE TYPE category AS ENUM ('VEGETABLE','ANIMAL', 'MARINE', 'DAIRY', 'OTHER');
 CREATE TYPE dish_type AS ENUM ('START', 'MAIN', 'DESSERT');
 CREATE Type unit AS ENUM ('PCS', 'KG', 'L');
 
+ALTER TABLE ingredient DROP COLUMN id_dish;
+
 -- Table des plats
 CREATE TABLE dish (
                       id serial PRIMARY KEY,
@@ -28,3 +30,5 @@ CREATE TABLE DishIngredient (
                                  CONSTRAINT fk_ingredient FOREIGN KEY (id_ingredient) REFERENCES ingredient(id),
                                  CONSTRAINT unique_dish_ingredient UNIQUE (id_dish, id_ingredient)
 );
+
+

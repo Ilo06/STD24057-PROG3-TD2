@@ -4,10 +4,10 @@ public class Dish {
     private int id;
     private String name;
     private DishTypeEnum dishType;
-    private List<Ingredient> ingredients;
+    private List<DishIngredient> ingredients;
     private Double unitPrice;
 
-    public Dish(int id, String name, DishTypeEnum dishType, List<Ingredient> ingredients) {
+    public Dish(int id, String name, DishTypeEnum dishType, List<DishIngredient> ingredients) {
         this.id = id;
         this.name = name;
         this.dishType = dishType;
@@ -24,6 +24,10 @@ public class Dish {
 
     public Dish() {
 
+    }
+
+    public List<DishIngredient> getDishIngredients() {
+        return ingredients;
     }
 
     public Double getGrossMargin() {

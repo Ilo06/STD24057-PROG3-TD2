@@ -13,10 +13,45 @@ public class DishIngredient {
         this.unit = unit;
     }
 
+    public DishIngredient(Dish dish, Ingredient ingredient, double quantity, UnitType unit) {
+    }
+
     public double getQuantityRequired() {
         return quantityRequired;
     }
     public int getIdIngredient() {
         return idIngredient;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getIdDish() {
+        return idDish;
+    }
+
+    public void setIdDish(int idDish) {
+        this.idDish = idDish;
+    }
+
+    public void setIdIngredient(int idIngredient) {
+        this.idIngredient = idIngredient;
+    }
+
+    public void setQuantityRequired(double quantityRequired) {
+        this.quantityRequired = quantityRequired;
+    }
+
+    public UnitType getUnit() {
+        return unit;
+    }
+
+    public void setUnit(UnitType unit) {
+        this.unit = unit;
     }
 }
