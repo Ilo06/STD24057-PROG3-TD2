@@ -278,7 +278,6 @@ public class DataRetriever {
         conn.setAutoCommit(false); // Transaction start
 
         try {
-            // 1. Save or Update the Ingredient
             String ingQuery = "INSERT INTO ingredient (id, name, price, category) VALUES (?, ?, ?, ?) " +
                     "ON CONFLICT (id) DO UPDATE SET name=?, price=?, category=? " +
                     "RETURNING id";
@@ -330,4 +329,6 @@ public class DataRetriever {
             conn.close();
         }
     }
+
+
 }

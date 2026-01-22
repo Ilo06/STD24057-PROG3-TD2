@@ -30,26 +30,22 @@ public class Dish {
         return ingredients;
     }
 
-//    public Double getGrossMargin() {
-//        if (this.unitPrice == null) {
-//            throw new RuntimeException("Le prix de vente n'ayant pas encore de valeur, il est impossible de calculer la marge.");
-//        }
-//        return this.unitPrice - this.getDishCost();
-//    }
+    public double getDishCost() {
+        if (ingredients == null || ingredients.isEmpty()) {
+            return 0.0;
+        }
 
-//    public Double getDishCost() {
-//        if (ingredients == null || ingredients.isEmpty()) {
-//            return 0.0;
-//        }
-//
-//        double total = 0.0;
-//
-//
-//
-//        return ingredients.stream()
-//                .mapToDouble(i -> i.getQuantityRequired() * i.getPrice());
-//    }
+        return ingredients.stream()
+                .mapToDouble(i -> i.getQuantityRequired() * i.getIngredient().getPrice())
+                .sum();
+    }
 
+    public Double getGrossMargin() {
+        if (this.unitPrice == null) {
+            throw new RuntimeException("Le prix de vente n'ayant pas encore de valeur, il est impossible de calculer la marge.");
+        }
+        return this.unitPrice - this.getDishCost();
+    }
     public Double getUnitPrice() {
         return unitPrice;
     }
