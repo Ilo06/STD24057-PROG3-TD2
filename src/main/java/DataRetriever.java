@@ -269,4 +269,65 @@ public class DataRetriever {
 
         return ingredients;
     }
+
+
+
+    public Ingredient saveIngredient(Ingredient ingredient) throws SQLException {
+        DBConnection connection = new DBConnection();
+        Connection conn = connection.getDBConnection();
+        conn.setAutoCommit(false); // Transaction start
+
+        try {
+            // 1. Save or Update the Ingredient
+            String ingQuery = "INSERT INTO ingredient (id, name, price, category) VALUES (?, ?, ?, ?) " +
+                    "ON CONFLICT (id) DO UPDATE SET name=?, price=?, category=? " +
+                    "RETURNING id";
+
+            PreparedStatement ingStmt = conn.prepareStatement(ingQuery);
+
+            ingStmt.setInt(1, ingredient.getId());
+            ingStmt.setString(2, ingredient.getName());
+            ingStmt.setDouble(3, ingredient.getPrice());
+            ingStmt.setObject(4, ingredient.getCategory(), Types.OTHER);
+
+            ingStmt.setString(5, ingredient.getName());
+            ingStmt.setDouble(6, ingredient.getPrice());
+            ingStmt.setObject(7, ingredient.getCategory(), Types.OTHER);
+
+            ResultSet rs = ingStmt.executeQuery();
+            if (rs.next()) {
+                ingredient.setId(rs.getInt(1));
+            }
+
+            if (ingredient.getStockMovementList() != null && !ingredient.getStockMovementList().isEmpty()) {
+                String movQuery = "INSERT INTO stock_movement (id, id_ingredient, quantity, type, unit, creation_datetime) " +
+                        "VALUES (?, ?, ?, ?, ?, ?) " +
+                        "ON CONFLICT (id) DO NOTHING"; // [cite: 51]
+
+                PreparedStatement movStmt = conn.prepareStatement(movQuery);
+
+                for (StockMovement movement : ingredient.getStockMovementList()) {
+                    movStmt.setInt(1, movement.getId());
+                    movStmt.setInt(2, ingredient.getId()); // Force link to this ingredient
+                    movStmt.setDouble(3, movement.getValue().getQuantity());
+                    movStmt.setObject(4, movement.getMovementType(), Types.OTHER);
+                    movStmt.setObject(5, movement.getMovementType(), Types.OTHER);
+                    movStmt.setTimestamp(6, java.sql.Timestamp.from(movement.getCreationDatetime()));
+
+                    movStmt.addBatch();
+                }
+                movStmt.executeBatch();
+            }
+
+            conn.commit();
+            return ingredient;
+
+        } catch (SQLException e) {
+            conn.rollback();
+            throw e;
+        } finally {
+            conn.setAutoCommit(true);
+            conn.close();
+        }
+    }
 }
