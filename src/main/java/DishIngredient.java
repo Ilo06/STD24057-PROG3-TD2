@@ -1,14 +1,14 @@
 public class DishIngredient {
     private int id;
-    private int idDish;
-    private int idIngredient;
+    private Dish Dish;
+    private Ingredient Ingredient;
     private double quantityRequired;
     private UnitType unit;
 
-    public DishIngredient(int id, int idDish, int idIngredient, double quantityRequired, UnitType unit) {
+    public DishIngredient(int id, Dish idDish, Ingredient ingredient, double quantityRequired, UnitType unit) {
         this.id = id;
-        this.idDish = idDish;
-        this.idIngredient = idIngredient;
+        this.Dish = idDish;
+        this.Ingredient = ingredient;
         this.quantityRequired = quantityRequired;
         this.unit = unit;
     }
@@ -19,8 +19,21 @@ public class DishIngredient {
     public double getQuantityRequired() {
         return quantityRequired;
     }
-    public int getIdIngredient() {
-        return idIngredient;
+
+    public Dish getDish() {
+        return Dish;
+    }
+
+    public void setDish(Dish dish) {
+        Dish = dish;
+    }
+
+    public Ingredient getIngredient() {
+        return Ingredient;
+    }
+
+    public void setIngredient(Ingredient ingredient) {
+        Ingredient = ingredient;
     }
 
     public int getId() {
@@ -31,17 +44,6 @@ public class DishIngredient {
         this.id = id;
     }
 
-    public int getIdDish() {
-        return idDish;
-    }
-
-    public void setIdDish(int idDish) {
-        this.idDish = idDish;
-    }
-
-    public void setIdIngredient(int idIngredient) {
-        this.idIngredient = idIngredient;
-    }
 
     public void setQuantityRequired(double quantityRequired) {
         this.quantityRequired = quantityRequired;
@@ -53,5 +55,9 @@ public class DishIngredient {
 
     public void setUnit(UnitType unit) {
         this.unit = unit;
+    }
+
+    public int getIdIngredient() {
+        return this.Ingredient.getId();
     }
 }

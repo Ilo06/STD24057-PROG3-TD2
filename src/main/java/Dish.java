@@ -14,7 +14,7 @@ public class Dish {
         this.ingredients = ingredients;
     }
 
-    public Dish(int id, String name, DishTypeEnum dishType, Double unitPrice, List<Ingredient> ingredients) {
+    public Dish(int id, String name, DishTypeEnum dishType, Double unitPrice, List<DishIngredient> ingredients) {
         this.id = id;
         this.name = name;
         this.dishType = dishType;
@@ -30,12 +30,25 @@ public class Dish {
         return ingredients;
     }
 
-    public Double getGrossMargin() {
-        if (this.unitPrice == null) {
-            throw new RuntimeException("Le prix de vente n'ayant pas encore de valeur, il est impossible de calculer la marge.");
-        }
-        return this.unitPrice - this.getDishCost();
-    }
+//    public Double getGrossMargin() {
+//        if (this.unitPrice == null) {
+//            throw new RuntimeException("Le prix de vente n'ayant pas encore de valeur, il est impossible de calculer la marge.");
+//        }
+//        return this.unitPrice - this.getDishCost();
+//    }
+
+//    public Double getDishCost() {
+//        if (ingredients == null || ingredients.isEmpty()) {
+//            return 0.0;
+//        }
+//
+//        double total = 0.0;
+//
+//
+//
+//        return ingredients.stream()
+//                .mapToDouble(i -> i.getQuantityRequired() * i.getPrice());
+//    }
 
     public Double getUnitPrice() {
         return unitPrice;
@@ -69,19 +82,21 @@ public class Dish {
         this.dishType = dishType;
     }
 
-    public List<Ingredient> getIngredients() {
+    public List<DishIngredient> getIngredients() {
         return ingredients;
     }
 
-    public Double getDishCost() {
-        return ingredients.stream()
-                .mapToDouble(Ingredient::getPrice)
-                .sum();
-    }
-
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(List<DishIngredient> ingredients) {
         this.ingredients = ingredients;
     }
+
+
+    //    public Double getDishCost() {
+//        return ingredients.stream()
+//                .mapToDouble(Ingredient::getPrice)
+//                .sum();
+//    }
+
 
     @Override
     public String toString() {

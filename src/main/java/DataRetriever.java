@@ -43,6 +43,7 @@ public class DataRetriever {
             );
 
             DishIngredient di = new DishIngredient(
+                    rs.getInt("id"),
                     dish,
                     ingredient,
                     rs.getDouble("quantity"),
