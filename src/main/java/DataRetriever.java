@@ -341,10 +341,27 @@ public class DataRetriever {
             if (fullDish == null) throw new RuntimeException("Plat introuvable: ID " + dishOrder.getDish().getId());
 
             for (DishIngredient di : fullDish.getDishIngredients()) {
-                int ingId = di.getIngredient().getId();
-                double needed = di.getQuantityRequired() * dishOrder.getQuantity();
-                totalRequired.put(ingId, totalRequired.getOrDefault(ingId, 0.0) + needed);
+                Ingredient ing = di.getIngredient();
+
+                double quantityPerDish = di.getQuantityRequired();
+                UnitType unitPerDish = di.getUnit();
+
+                double totalNeeded = quantityPerDish * dishOrder.getQuantity();
+
+                // Conversion vers KG (unité de stock)
+                double convertedQuantity = UnitConverter.convert(
+                        ing.getName(),
+                        totalNeeded,
+                        unitPerDish,
+                        UnitType.KG
+                );
+
+                totalRequired.put(
+                        ing.getId(),
+                        totalRequired.getOrDefault(ing.getId(), 0.0) + convertedQuantity
+                );
             }
+
         }
 
         for (Integer ingredientId : totalRequired.keySet()) {
