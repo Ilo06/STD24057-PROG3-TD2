@@ -47,4 +47,15 @@ public class Order {
     }
 
 
+    public double getTotalAmountWithoutVAT() {
+        double total = 0.0;
+        for (DishOrder dishOrder : dishOrders) {
+            total += dishOrder.getDish().getUnitPrice() * dishOrder.getQuantity();
+        }
+        return total;
+    }
+
+    public double getTotalAmountWithVAT(double vatRate) {
+        return getTotalAmountWithoutVAT() * (1 + vatRate);
+    }
 }
