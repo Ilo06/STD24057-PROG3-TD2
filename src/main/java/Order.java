@@ -7,6 +7,7 @@ public class Order {
     private String reference;
     private Instant creationDatetime;
     private List<DishOrder> dishOrderList;
+    private TableOrder tableOrder;
 
     public Integer getId() {
         return id;
@@ -40,6 +41,14 @@ public class Order {
         this.dishOrderList = dishOrderList;
     }
 
+    public TableOrder getTableOrder() {
+        return tableOrder;
+    }
+
+    public void setTableOrder(TableOrder tableOrder) {
+        this.tableOrder = tableOrder;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -61,6 +70,8 @@ public class Order {
     public double getTotalAmountWithVAT(double vatRate) {
         return getTotalAmountWithoutVAT() * (1 + vatRate);
     }
+
+
 
     @Override
     public boolean equals(Object o) {
