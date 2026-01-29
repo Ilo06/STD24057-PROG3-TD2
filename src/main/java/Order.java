@@ -1,24 +1,18 @@
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
-    int id;
-    String reference;
-    Instant creationDatetime;
-    List<DishOrder> dishOrders;
+    private Integer id;
+    private String reference;
+    private Instant creationDatetime;
+    private List<DishOrder> dishOrderList;
 
-    public Order(int id, String reference, Instant creationDatetime, List<DishOrder> dishOrders) {
-        this.id = id;
-        this.reference = reference;
-        this.creationDatetime = creationDatetime;
-        this.dishOrders = dishOrders;
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -38,24 +32,41 @@ public class Order {
         this.creationDatetime = creationDatetime;
     }
 
-    public List<DishOrder> getDishOrders() {
-        return dishOrders;
+    public List<DishOrder> getDishOrderList() {
+        return dishOrderList;
     }
 
-    public void setDishOrders(List<DishOrder> dishOrders) {
-        this.dishOrders = dishOrders;
+    public void setDishOrderList(List<DishOrder> dishOrderList) {
+        this.dishOrderList = dishOrderList;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", reference='" + reference + '\'' +
+                ", creationDatetime=" + creationDatetime +
+                ", dishOrderList=" + dishOrderList +
+                '}';
+    }
+
+    Double getTotalAmountWithoutVat() {
+        throw new RuntimeException("Not implemented");
+    }
+
+    Double getTotalAmountWithVat() {
+        throw new RuntimeException("Not implemented");
     }
 
 
-    public double getTotalAmountWithoutVAT() {
-        double total = 0.0;
-        for (DishOrder dishOrder : dishOrders) {
-            total += dishOrder.getDish().getUnitPrice() * dishOrder.getQuantity();
-        }
-        return total;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Order order)) return false;
+        return Objects.equals(id, order.id) && Objects.equals(reference, order.reference) && Objects.equals(creationDatetime, order.creationDatetime) && Objects.equals(dishOrderList, order.dishOrderList);
     }
 
-    public double getTotalAmountWithVAT(double vatRate) {
-        return getTotalAmountWithoutVAT() * (1 + vatRate);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, reference, creationDatetime, dishOrderList);
     }
 }

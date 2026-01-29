@@ -1,64 +1,58 @@
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Dish {
-    private int id;
+    private Integer id;
+    private Double price;
     private String name;
     private DishTypeEnum dishType;
-    private List<DishIngredient> ingredients;
-    private Double unitPrice;
-
-    public Dish(int id, String name, DishTypeEnum dishType, List<DishIngredient> ingredients) {
-        this.id = id;
-        this.name = name;
-        this.dishType = dishType;
-        this.ingredients = ingredients;
-    }
-
-    public Dish(int id, String name, DishTypeEnum dishType, Double unitPrice, List<DishIngredient> ingredients) {
-        this.id = id;
-        this.name = name;
-        this.dishType = dishType;
-        this.unitPrice = unitPrice;
-        this.ingredients = ingredients;
-    }
+    private List<DishIngredient> dishIngredients;
 
     public Dish() {
-
     }
 
     public List<DishIngredient> getDishIngredients() {
-        return ingredients;
+        return dishIngredients;
     }
 
-    public double getDishCost() {
-        if (ingredients == null || ingredients.isEmpty()) {
-            return 0.0;
+    public void setDishIngredients(List<DishIngredient> dishIngredients) {
+        if (dishIngredients == null) {
+            this.dishIngredients = new ArrayList<>();
+            return;
         }
-
-        return ingredients.stream()
-                .mapToDouble(i -> i.getQuantityRequired() * i.getIngredient().getPrice())
-                .sum();
-    }
-
-    public Double getGrossMargin() {
-        if (this.unitPrice == null) {
-            throw new RuntimeException("Le prix de vente n'ayant pas encore de valeur, il est impossible de calculer la marge.");
+        for (DishIngredient ingredient : dishIngredients) {
+            ingredient.setDish(this);
         }
-        return this.unitPrice - this.getDishCost();
-    }
-    public Double getUnitPrice() {
-        return unitPrice;
+        this.dishIngredients = dishIngredients;
     }
 
-    public void setUnitPrice(Double unitPrice) {
-        this.unitPrice = unitPrice;
+
+    public Double getPrice() {
+        return price;
     }
 
-    public int getId() {
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Double getDishCost() {
+        double totalPrice = 0;
+        for (DishIngredient dishIngredient : dishIngredients) {
+            Double quantity = dishIngredient.getQuantity();
+            if (quantity == null) {
+                throw new RuntimeException("Some ingredients have undefined quantity");
+            }
+            totalPrice = totalPrice + dishIngredient.getIngredient().getPrice() * quantity;
+        }
+        return totalPrice;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -78,30 +72,35 @@ public class Dish {
         this.dishType = dishType;
     }
 
-    public List<DishIngredient> getIngredients() {
-        return ingredients;
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Dish dish = (Dish) o;
+        return Objects.equals(id, dish.id) && Objects.equals(name, dish.name) && dishType == dish.dishType && Objects.equals(dishIngredients, dish.dishIngredients);
     }
 
-    public void setIngredients(List<DishIngredient> ingredients) {
-        this.ingredients = ingredients;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, dishType, dishIngredients);
     }
-
-
-    //    public Double getDishCost() {
-//        return ingredients.stream()
-//                .mapToDouble(Ingredient::getPrice)
-//                .sum();
-//    }
-
 
     @Override
     public String toString() {
         return "Dish{" +
                 "id=" + id +
+                ", price=" + price +
                 ", name='" + name + '\'' +
                 ", dishType=" + dishType +
-                ", unitPrice=" + unitPrice +
-                ", ingredients=" + ingredients +
+                ", cost=" + getDishCost() +
+                ", grossMargin=" + getGrossMargin() +
+                ", ingredients=" + dishIngredients +
                 '}';
+    }
+
+    public Double getGrossMargin() {
+        if (price == null) {
+            throw new RuntimeException("Price is null");
+        }
+        return price - getDishCost();
     }
 }

@@ -1,61 +1,35 @@
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+
+import static java.time.Instant.now;
 
 public class Ingredient {
-    private int id;
+    private Integer id;
     private String name;
-    private Double price;
     private CategoryEnum category;
-    private Dish dish;
-    private List<StockMovement> stockMovementList = new ArrayList<>();
+    private Double price;
+    private List<StockMovement> stockMovementList;
 
-
-    public StockValue getStockValueAt(Instant t){
-        double currentQuantity = 0.0;
-
-        for (StockMovement movement : stockMovementList) {
-            if (movement.getCreationDatetime().isBefore(t) || movement.getCreationDatetime().equals(t)) {
-                if (movement.getMovementType() == MovementTypeEnum.IN) {
-                    currentQuantity += movement.getValue().getQuantity();
-                } else if (movement.getMovementType() == MovementTypeEnum.OUT) {
-                    currentQuantity -= movement.getValue().getQuantity();
-                }
-            }
-        }
-
-        return new StockValue((int) currentQuantity, UnitType.KG);
+    public Ingredient() {
     }
 
-
-    public Ingredient(int id, String name, Double price, CategoryEnum category, Dish dish) {
+    public Ingredient(Integer id, String name, CategoryEnum category, Double price, List<StockMovement> stockMovementList) {
         this.id = id;
         this.name = name;
-        this.price = price;
         this.category = category;
-        this.dish = dish;
-    }
-
-    public Ingredient(String name, Double price, CategoryEnum category) {
-        this.name = name;
         this.price = price;
-        this.category = category;
-    }
-
-
-    public List<StockMovement> getStockMovementList() {
-        return stockMovementList;
-    }
-
-    public void setStockMovementList(List<StockMovement> stockMovementList) {
         this.stockMovementList = stockMovementList;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -67,14 +41,6 @@ public class Ingredient {
         this.name = name;
     }
 
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
     public CategoryEnum getCategory() {
         return category;
     }
@@ -83,17 +49,59 @@ public class Ingredient {
         this.category = category;
     }
 
-
-    public Dish getDish() {
-        return dish;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setDish(Dish dish) {
-        this.dish = dish;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
-    public String getDishName() {
-        return dish == null ? null : dish.getName();
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && category == that.category && Objects.equals(price, that.price);
+    }
+
+    public List<StockMovement> getStockMovementList() {
+        return stockMovementList;
+    }
+
+    public void setStockMovementList(List<StockMovement> stockMovementList) {
+        this.stockMovementList = stockMovementList;
+    }
+
+    public StockValue getStockValueAt(Instant t) {
+        if (stockMovementList == null) return null;
+        Map<Unit, List<StockMovement>> unitSet = stockMovementList.stream()
+                .collect(Collectors.groupingBy(stockMovement -> stockMovement.getValue().getUnit()));
+        if (unitSet.keySet().size() > 1) {
+            throw new RuntimeException("Multiple unit found and not handle for conversion");
+        }
+
+        List<StockMovement> stockMovements = stockMovementList.stream()
+                .filter(stockMovement -> !stockMovement.getCreationDatetime().isAfter(t))
+                .toList();
+        double movementIn = stockMovements.stream()
+                .filter(stockMovement -> stockMovement.getType().equals(MovementTypeEnum.IN))
+                .flatMapToDouble(stockMovement -> DoubleStream.of(stockMovement.getValue().getQuantity()))
+                .sum();
+        double movementOut = stockMovements.stream()
+                .filter(stockMovement -> stockMovement.getType().equals(MovementTypeEnum.OUT))
+                .flatMapToDouble(stockMovement -> DoubleStream.of(stockMovement.getValue().getQuantity()))
+                .sum();
+
+        StockValue stockValue = new StockValue();
+        stockValue.setQuantity(movementIn - movementOut);
+        stockValue.setUnit(unitSet.keySet().stream().findFirst().get());
+
+        return stockValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, category, price);
     }
 
     @Override
@@ -101,9 +109,9 @@ public class Ingredient {
         return "Ingredient{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", price=" + price +
                 ", category=" + category +
-                ", dish=" + getDishName() +
+                ", price=" + price +
+                ", actualStock=" + getStockValueAt(now()) +
                 '}';
     }
 }

@@ -1,17 +1,37 @@
 import java.time.Instant;
+import java.util.Objects;
 
 public class StockMovement {
-    private int id;
+    private Integer id;
+    private MovementTypeEnum type;
+    private Instant creationDatetime;
     private StockValue value;
-    private MovementTypeEnum movementType;
-    private Instant CreationDatetime;
 
-    public int getId() {
+    public StockMovement() {
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public MovementTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(MovementTypeEnum type) {
+        this.type = type;
+    }
+
+    public Instant getCreationDatetime() {
+        return creationDatetime;
+    }
+
+    public void setCreationDatetime(Instant creationDatetime) {
+        this.creationDatetime = creationDatetime;
     }
 
     public StockValue getValue() {
@@ -22,26 +42,24 @@ public class StockMovement {
         this.value = value;
     }
 
-    public MovementTypeEnum getMovementType() {
-        return movementType;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StockMovement that)) return false;
+        return Objects.equals(id, that.id)  && type == that.type && Objects.equals(creationDatetime, that.creationDatetime) && Objects.equals(value, that.value);
     }
 
-    public void setMovementType(MovementTypeEnum movementType) {
-        this.movementType = movementType;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, creationDatetime, value);
     }
 
-    public Instant getCreationDatetime() {
-        return CreationDatetime;
-    }
-
-    public void setCreationDatetime(Instant creationDatetime) {
-        CreationDatetime = creationDatetime;
-    }
-
-    public StockMovement(int id, StockValue value, MovementTypeEnum movementType, Instant creationDatetime) {
-        this.id = id;
-        this.value = value;
-        this.movementType = movementType;
-        CreationDatetime = creationDatetime;
+    @Override
+    public String toString() {
+        return "StockMovement{" +
+                "id=" + id +
+                ", type=" + type +
+                ", creationDatetime=" + creationDatetime +
+                ", value=" + value +
+                '}';
     }
 }

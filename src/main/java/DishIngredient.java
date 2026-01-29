@@ -1,63 +1,49 @@
+
+
 public class DishIngredient {
-    private int id;
-    private Dish Dish;
-    private Ingredient Ingredient;
-    private double quantityRequired;
-    private UnitType unit;
-
-    public DishIngredient(int id, Dish idDish, Ingredient ingredient, double quantityRequired, UnitType unit) {
-        this.id = id;
-        this.Dish = idDish;
-        this.Ingredient = ingredient;
-        this.quantityRequired = quantityRequired;
-        this.unit = unit;
-    }
-
-    public DishIngredient(Dish dish, Ingredient ingredient, double quantity, UnitType unit) {
-    }
-
-    public double getQuantityRequired() {
-        return quantityRequired;
-    }
-
-    public Dish getDish() {
-        return Dish;
-    }
-
-    public void setDish(Dish dish) {
-        Dish = dish;
-    }
+    private Dish dish;
+    private Ingredient ingredient;
+    private Double quantity;
+    private Unit unit;
 
     public Ingredient getIngredient() {
-        return Ingredient;
+        return ingredient;
     }
 
     public void setIngredient(Ingredient ingredient) {
-        Ingredient = ingredient;
+        this.ingredient = ingredient;
     }
 
-    public int getId() {
-        return id;
+    public Double getQuantity() {
+        return quantity;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setQuantity(Double quantity) {
+        this.quantity = quantity;
     }
 
-
-    public void setQuantityRequired(double quantityRequired) {
-        this.quantityRequired = quantityRequired;
-    }
-
-    public UnitType getUnit() {
+    public Unit getUnit() {
         return unit;
     }
 
-    public void setUnit(UnitType unit) {
+    public void setUnit(Unit unit) {
         this.unit = unit;
     }
 
-    public int getIdIngredient() {
-        return this.Ingredient.getId();
+    public Dish getDish() {
+        return dish;
+    }
+
+    public void setDish(Dish dish) {
+        this.dish = dish;
+    }
+
+    @Override
+    public String toString() {
+        return "DishIngredient{" +
+                "ingredient=" + ingredient +
+                ", quantity=" + quantity +
+                ", unit=" + unit +
+                '}';
     }
 }
