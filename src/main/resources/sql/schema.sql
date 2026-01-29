@@ -24,13 +24,13 @@ alter table dish
     rename column price to selling_price;
 
 alter table ingredient
-drop column if exists id_dish;
+    drop column if exists id_dish;
 
 alter table ingredient
     add column if not exists required_quantity numeric(10, 2);
 
 alter table ingredient
-drop column if exists required_quantity;
+    drop column if exists required_quantity;
 
 create type unit as enum ('PCS', 'KG', 'L');
 
@@ -43,7 +43,7 @@ create table if not exists dish_ingredient
     unit              unit,
     foreign key (id_ingredient) references ingredient (id),
     foreign key (id_dish) references dish (id)
-    );
+);
 
 create type movement_type as enum ('IN', 'OUT');
 
@@ -56,7 +56,7 @@ create table if not exists stock_movement
     type              movement_type,
     creation_datetime timestamp without time zone,
     foreign key (id_ingredient) references ingredient (id)
-    );
+);
 
 
 alter table ingredient
@@ -67,7 +67,7 @@ create table if not exists "order"
     id                serial primary key,
     reference         varchar(255),
     creation_datetime timestamp without time zone
-    );
+);
 
 create table if not exists dish_order
 (
@@ -75,4 +75,4 @@ create table if not exists dish_order
     id_order int references "order" (id),
     id_dish  int references dish (id),
     quantity int
-    );
+);

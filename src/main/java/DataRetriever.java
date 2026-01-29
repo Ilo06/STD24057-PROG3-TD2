@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class DataRetriever {
         }
     }
 
-    public List<DishOrder> findDishOrderByIdOrder(Integer idOrder) {
+    private List<DishOrder> findDishOrderByIdOrder(Integer idOrder) {
         DBConnection dbConnection = new DBConnection();
         Connection connection = dbConnection.getConnection();
         List<DishOrder> dishOrders = new ArrayList<>();
@@ -174,7 +175,7 @@ public class DataRetriever {
         }
     }
 
-    public List<StockMovement> findStockMovementsByIngredientId(Integer id) {
+    private List<StockMovement> findStockMovementsByIngredientId(Integer id) {
 
         DBConnection dbConnection = new DBConnection();
         Connection connection = dbConnection.getConnection();
@@ -299,7 +300,7 @@ public class DataRetriever {
     }
 
 
-    public void detachIngredients(Connection conn, List<DishIngredient> dishIngredients) {
+    private void detachIngredients(Connection conn, List<DishIngredient> dishIngredients) {
         Map<Integer, List<DishIngredient>> dishIngredientsGroupByDishId = dishIngredients.stream()
                 .collect(Collectors.groupingBy(dishIngredient -> dishIngredient.getDish().getId()));
         dishIngredientsGroupByDishId.forEach((dishId, dishIngredientList) -> {
@@ -313,7 +314,7 @@ public class DataRetriever {
         });
     }
 
-    public void attachIngredients(Connection conn, List<DishIngredient> ingredients)
+    private void attachIngredients(Connection conn, List<DishIngredient> ingredients)
             throws SQLException {
 
         if (ingredients == null || ingredients.isEmpty()) {
@@ -337,7 +338,7 @@ public class DataRetriever {
         }
     }
 
-    public List<DishIngredient> findIngredientByDishId(Integer idDish) {
+    private List<DishIngredient> findIngredientByDishId(Integer idDish) {
         DBConnection dbConnection = new DBConnection();
         Connection connection = dbConnection.getConnection();
         List<DishIngredient> dishIngredients = new ArrayList<>();
@@ -371,7 +372,7 @@ public class DataRetriever {
     }
 
 
-    public String getSerialSequenceName(Connection conn, String tableName, String columnName)
+    private String getSerialSequenceName(Connection conn, String tableName, String columnName)
             throws SQLException {
 
         String sql = "SELECT pg_get_serial_sequence(?, ?)";
@@ -389,7 +390,7 @@ public class DataRetriever {
         return null;
     }
 
-    public int getNextSerialValue(Connection conn, String tableName, String columnName)
+    private int getNextSerialValue(Connection conn, String tableName, String columnName)
             throws SQLException {
 
         String sequenceName = getSerialSequenceName(conn, tableName, columnName);
@@ -411,7 +412,7 @@ public class DataRetriever {
         }
     }
 
-    public void updateSequenceNextValue(Connection conn, String tableName, String columnName, String sequenceName) throws SQLException {
+    private void updateSequenceNextValue(Connection conn, String tableName, String columnName, String sequenceName) throws SQLException {
         String setValSql = String.format(
                 "SELECT setval('%s', (SELECT COALESCE(MAX(%s), 0) FROM %s))",
                 sequenceName, columnName, tableName
@@ -419,6 +420,74 @@ public class DataRetriever {
 
         try (PreparedStatement ps = conn.prepareStatement(setValSql)) {
             ps.executeQuery();
+        }
+    }
+
+    public Order saveOrder(Order orderToSave) {
+        try (Connection conn = new DBConnection().getConnection()) {
+            conn.setAutoCommit(false);
+
+            for (DishOrder dishOrder : orderToSave.getDishOrderList()) {
+                Dish dish = findDishById(dishOrder.getDish().getId());
+
+                for (DishIngredient di : dish.getDishIngredients()) {
+
+                    double quantityNeeded = di.getQuantity() * dishOrder.getQuantity();
+
+                    Ingredient ingredient = di.getIngredient();
+                    StockValue currentStock = ingredient.getStockValueAt(Instant.now());
+
+                    double stockQuantityConverted;
+
+                    if (currentStock.getUnit() != di.getUnit()) {
+                        stockQuantityConverted = UnitConverter.convert(
+                                ingredient.getName(),                 // ex: "Tomate"
+                                currentStock.getQuantity(),            // quantité stock
+                                currentStock.getUnit(),                // unité stock
+                                di.getUnit()                            // unité recette
+                        );
+                    } else {
+                        stockQuantityConverted = currentStock.getQuantity();
+                    }
+
+                    if (stockQuantityConverted < quantityNeeded) {
+                        conn.rollback();
+                        throw new RuntimeException(
+                                "Stock insuffisant pour l'ingrédient : " + ingredient.getName()
+                        );
+                    }
+                }
+
+            }
+
+            String sqlOrder = "INSERT INTO \"order\" (reference, creation_datetime) VALUES (?, ?) RETURNING id";
+            int orderId;
+            try (PreparedStatement ps = conn.prepareStatement(sqlOrder)) {
+                ps.setString(1, orderToSave.getReference());
+                ps.setTimestamp(2, Timestamp.from(orderToSave.getCreationDatetime()));
+                ResultSet rs = ps.executeQuery();
+                rs.next();
+                orderId = rs.getInt(1);
+            }
+
+            // 3. INSERTION DES LIGNES DE COMMANDE
+            String sqlDishOrder = "INSERT INTO dish_order (id_order, id_dish, quantity) VALUES (?, ?, ?)";
+            try (PreparedStatement ps = conn.prepareStatement(sqlDishOrder)) {
+                for (DishOrder doItem : orderToSave.getDishOrderList()) {
+                    ps.setInt(1, orderId);
+                    ps.setInt(2, doItem.getDish().getId());
+                    ps.setInt(3, doItem.getQuantity());
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+            }
+
+            conn.commit();
+            orderToSave.setId(orderId);
+            return orderToSave;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la sauvegarde : " + e.getMessage());
         }
     }
 }
