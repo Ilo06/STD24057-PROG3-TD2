@@ -50,14 +50,17 @@ public class Order {
                 '}';
     }
 
-    Double getTotalAmountWithoutVat() {
-        throw new RuntimeException("Not implemented");
+    public double getTotalAmountWithoutVAT() {
+        double total = 0.0;
+        for (DishOrder dishOrder : dishOrderList) {
+            total += dishOrder.getDish().getPrice() * dishOrder.getQuantity();
+        }
+        return total;
     }
 
-    Double getTotalAmountWithVat() {
-        throw new RuntimeException("Not implemented");
+    public double getTotalAmountWithVAT(double vatRate) {
+        return getTotalAmountWithoutVAT() * (1 + vatRate);
     }
-
 
     @Override
     public boolean equals(Object o) {
