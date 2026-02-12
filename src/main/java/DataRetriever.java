@@ -491,5 +491,47 @@ public class DataRetriever {
         }
     }
 
+    public StockValue getStockValueAt(int idIngredient, Instant t) {
+
+        String sql = """
+        SELECT unit,
+               SUM(
+                   CASE
+                       WHEN type = 'IN' THEN quantity
+                       WHEN type = 'OUT' THEN -quantity
+                       ELSE 0
+                   END
+               ) AS actual_quantity
+        FROM stock_movement
+        WHERE creation_datetime <= ?
+          AND id_ingredient = ?
+        GROUP BY unit
+    """;
+
+        StockValue stock = new StockValue();
+
+        try (Connection conn = new DBConnection().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setTimestamp(1, Timestamp.from(t));
+            ps.setInt(2, idIngredient);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    String unit = rs.getString("unit");
+                    double quantity = rs.getDouble("actual_quantity");
+
+                    stock = new StockValue(quantity, Unit.valueOf(unit));
+
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return stock;
+    }
 
 }

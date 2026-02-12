@@ -1,6 +1,29 @@
+import java.util.Objects;
+
 public class StockValue {
     private Double quantity;
     private Unit unit;
+
+    public StockValue(Double quantity, Unit unit) {
+        this.quantity = quantity;
+        this.unit = unit;
+    }
+
+    public StockValue() {
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        StockValue that = (StockValue) o;
+        return Objects.equals(quantity, that.quantity) && unit == that.unit;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(quantity, unit);
+    }
 
     public Double getQuantity() {
         return quantity;
