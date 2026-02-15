@@ -534,4 +534,35 @@ public class DataRetriever {
         return stock;
     }
 
+    public Double getDishCost(Integer dishId){
+        String sql = """ 
+                SELECT
+                    d.name, SUM(di.required_quantity * i.price) AS total_cost
+                FROM
+                    dish d
+                JOIN
+                    dish_ingredient di ON d.id = di.id_dish
+                JOIN
+                    ingredient i ON di.id_ingredient = i.id
+                WHERE d.id = ?
+                GROUP BY d.id, d.name
+                """;
+
+        try (Connection conn = new DBConnection().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, dishId);
+
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("total_cost");
+                } else {
+                    throw new RuntimeException("Dish not found with id " + dishId);
+                }
+            }
+
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
