@@ -24,7 +24,7 @@ public class Main {
         } else {
             System.out.println("not okay");
             System.out.println(dish.getDishCost());
-            System.out.println(dataRetriever.getDishCost(3));
+            System.out.println(dataRetriever.getDishCost(1));
 
 
         }
