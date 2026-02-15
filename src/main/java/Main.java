@@ -28,5 +28,13 @@ public class Main {
 
 
         }
+
+        if (dish.getGrossMargin().equals(dataRetriever.getGrossMargin(1))){
+            System.out.println("okay");
+        }else  {
+            System.out.println("not okay");
+            System.out.println(dish.getGrossMargin());
+            System.out.println(dataRetriever.getGrossMargin(1));
+        }
     }
 }

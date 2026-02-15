@@ -565,4 +565,35 @@ public class DataRetriever {
             throw new RuntimeException(e);
         }
     }
+
+    public Double getGrossMargin(Integer dishId) {
+
+        String sql = """
+        SELECT 
+            d.selling_price - SUM(di.required_quantity * i.price) AS gross_margin
+        FROM dish d
+        JOIN dish_ingredient di ON d.id = di.id_dish
+        JOIN ingredient i ON i.id = di.id_ingredient
+        WHERE d.id = ?
+        GROUP BY d.selling_price
+    """;
+
+        try (Connection conn = new DBConnection().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, dishId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("gross_margin");
+                } else {
+                    throw new RuntimeException("Dish not found with id " + dishId);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
